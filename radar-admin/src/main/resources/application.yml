@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    url: jdbc:mysql://192.168.123.19:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
     username: root
-    password: 456132
+    password: 123456
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -29,8 +29,8 @@ spring:
     cache: false
     prefix: classpath:/templates
   redis:
-    host: 127.0.0.1
-    #password:
+    host: 192.168.123.19
+    password: root@chenying0224
     timeout: 2000ms
     database: 0  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
     lettuce:
@@ -47,16 +47,16 @@ mapper:
     - tk.mybatis.mapper.common.Mapper
   not-empty: false
 mongodb:
-  url: mongodb://localhost:27017/radar
+  url: mongodb://192.168.123.19:27017/radar
 mobile:
   info:
-    path: D:/soft/moble_info.csv
+    path: C:/software/moble_info.csv
 ip2region:
   db:
-    path: D:/soft/ip2region.db
+    path: C:/software/ip2region.db
 elksearch:
-  server: localhost
-  url: http://localhost:9200
+  server: 192.168.123.19
+  url: http://192.168.123.19:9200
 logging:
   level:
     root: info
