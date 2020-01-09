@@ -1,15 +1,10 @@
 package com.pgmmers.radar.util;
-
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisShardInfo;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
-
-import java.util.ArrayList;
+import org.springframework.util.StringUtils;
+import redis.clients.jedis.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -135,17 +130,35 @@ public class TestRedisAndLua {
 //        System.out.println(jedis.get("k1"));//查看执行情况
 
         try {
-            String lua = "local num = redis.call('incr', KEYS[1])\n" +
-                    "if tonumber(num) == 1 then\n" +
-                    " redis.call('expire', KEYS[1], ARGV[1])\n" +
-                    " return 1\n" +
-                    "elseif tonumber(num) > tonumber(ARGV[2]) then\n" +
-                    " return 0\n" +
-                    "else \n" +
-                    " return 1\n" +
-                    "end\n";
-            Object result = jedis.evalsha(jedis.scriptLoad(lua), Arrays.asList("127.0.0.1"), Arrays.asList("10", "1"));
+            String lua = "local num = redis.call('incr', KEYS[1])  " +
+                    "if tonumber(num) == 1 then   " +
+                    " redis.call('expire', KEYS[1], ARGV[1])   " +
+                    " return 0   " +
+                    "elseif tonumber(num) > tonumber(ARGV[2]) then  " +
+                    " return 1  " +
+                    "else  " +
+                    " return 0  " +
+                    "end  ";
+            Object result = jedis.evalsha(jedis.scriptLoad(lua), Arrays.asList("127.0.0.21"), Arrays.asList("10", "1"));
             System.out.println(result);
+            System.out.println((result!=null&&result.toString().equals("0")));
+//            String popLua = " local t = { } " +
+//                            "local keys = redis.call('lrange',KEYS[1],0,ARGV[1]);  " +
+//                            " redis.call('ltrim',KEYS[1],ARGV[1],-1);  " +
+//                            "for iter, value in ipairs(keys) " +
+//                            "do  " +
+//                          //  "table.insert(t, { value, redis.call('llen', value) }) " +
+//                            "table.insert(t,  value ) " +
+//                            " end   return t";
+//            List<String> ids = (List<String>)jedis.evalsha(jedis.scriptLoad(popLua), Arrays.asList("key"), Arrays.asList("100"));
+//            System.out.println(ids);
+//
+//
+//            Pipeline p = jedis.pipelined();
+//            p.lrange("key", 0, 2 - 1);
+//            p.ltrim("key", 2, -1);
+//            Response response = p.exec();
+//            List<Object> string = (List<Object>) response.get();
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -159,6 +172,4 @@ public class TestRedisAndLua {
         }
         jedis.close();
     }
-
-
 }
